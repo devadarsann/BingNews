@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">BingNews</string>
+    <string name="title_activity_articels">ArticelsActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="top_articles">Top Stories</string>
+    <string name="category_entertainment">Entertaintment</string>
+    <string name="entertaintment">Entertaintment</string>
+    <string name="business">Business</string>
+    <string name="health">Health</string>
+    <string name="politics">Politics</string>
+    <string name="science_and_technology">Science and Technology</string>
+    <string name="sports">Sports</string>
+    <string name="us_uk">US/UK</string>
+    <string name="world">World</string>
+    <string name="search">Search</string>
+</resources>
