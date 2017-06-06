@@ -46,6 +46,7 @@ public class NetworkConnector extends AsyncTask<String,Void,String> {
             while ((inputlIne=in.readLine())!=null){
                 response.append(inputlIne);
             }
+
             in.close();
 
             resp=response.toString();
