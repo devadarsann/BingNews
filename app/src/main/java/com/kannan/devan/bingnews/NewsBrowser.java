@@ -4,6 +4,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -15,6 +16,7 @@ public class NewsBrowser extends AppCompatActivity {
     WebView mWebView;
     ProgressBar mProgressBar;
     Toolbar mToolbar;
+    String pageTitle;
 
     @Override
     public void onBackPressed() {
@@ -28,16 +30,31 @@ public class NewsBrowser extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_news,menu);
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_browser);
         mToolbar= (Toolbar) findViewById(R.id.linkbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mWebView= (WebView) findViewById(R.id.newsBrowse);
         mProgressBar= (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setMax(100);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                pageTitle=view.getTitle();
+                mToolbar.setSubtitle(url);
+                mToolbar.setTitle(pageTitle);
+            }
+        });
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -51,10 +68,13 @@ public class NewsBrowser extends AppCompatActivity {
                 if (newProgress==100){
                     mProgressBar.setVisibility(View.GONE);
                 }
+                mToolbar.setTitle(getIntent().getExtras().getString("url"));
             }
         });
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.loadUrl(getIntent().getExtras().getString("url"));
     }
+
+
 }
