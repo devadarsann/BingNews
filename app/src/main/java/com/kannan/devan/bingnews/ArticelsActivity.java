@@ -6,15 +6,20 @@ import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.*;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.transition.AutoTransition;
+import android.transition.ChangeBounds;
+import android.transition.ChangeTransform;
+import android.transition.Explode;
+import android.transition.Scene;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -73,9 +78,14 @@ public class ArticelsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articels);
+        getWindow().setSharedElementEnterTransition(new ChangeTransform());
+        //getWindow().setEnterTransition(TransitionUtils.makeEnterTransition());
+        //getWindow().setSharedElementEnterTransition(TransitionUtils.makeSharedElementTransition(this));
+        //setEnterSharedElementCallback(new EnterSharedElementCallback(this));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setPopupTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -251,6 +261,8 @@ public class ArticelsActivity extends AppCompatActivity {
                 }
 
                 NewsAdapter mAdapter = new NewsAdapter(mJsonDataList, getContext());
+                NewsView.addItemDecoration(new com.kannan.devan.bingnews.DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
+                //NewsView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
                 NewsView.setAdapter(mAdapter);
                 mAdapter.setmNewsItemClickListener(this);
             }
@@ -341,7 +353,7 @@ public class ArticelsActivity extends AppCompatActivity {
 
 
         @Override
-        public void OnItemClickListener(JsonData mJsonData) {
+        public void OnItemClickListener(JsonData mJsonData,View view) {
             Intent mIntent=new Intent(getContext(),NewsReadActivity.class);
             //mIntent.putExtra("readLink",ReadLink);
             mIntent.putExtra("readLink",mJsonData.getReadlink());
@@ -349,7 +361,8 @@ public class ArticelsActivity extends AppCompatActivity {
             mIntent.putExtra("imageUrl",mJsonData.getImageUrl());
             mIntent.putExtra("provider",mJsonData.getProvider());
             mIntent.putExtra("heading",mJsonData.getHeading());
-            startActivity(mIntent);
+            ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),view,"description");
+            startActivity(mIntent,options.toBundle());
         }
     }
 

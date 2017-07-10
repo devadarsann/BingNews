@@ -20,6 +20,9 @@ public class NewsReadActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_read);
+        //getWindow().setEnterTransition(TransitionUtils.makeEnterTransition());
+        //getWindow().setSharedElementEnterTransition(TransitionUtils.makeSharedElementTransition(this));
+        //setEnterSharedElementCallback(new EnterSharedElementCallback(this));
         Toolbar mToolbar= (Toolbar) findViewById(R.id.mToolbar);
         setSupportActionBar(mToolbar);
         try {

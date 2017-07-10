@@ -70,6 +70,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                .dontTransform()
 //                .into(holder.mImage);
+        holder.description.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         Picasso.with(mContext)
                 .load(mJsonData.getImageUrl())
                 .into(new Target() {
@@ -122,13 +128,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
         public ImageView mImage;
         public Viewholder(View itemView) {
             super(itemView);
-            description= (TextView) itemView.findViewById(R.id.description);
+            description= (TextView) itemView.findViewById(R.id.article_heading);
             date= (TextView) itemView.findViewById(R.id.date);
             category= (TextView) itemView.findViewById(R.id.category);
             mImage= (ImageView) itemView.findViewById(R.id.image);
             mImage.setTransitionName("headerImage");
-            Pair<View,String> pair=Pair.create((View)mImage,"holderImage");
-            ActivityOptionsCompat activityOptionsCompat=ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,pair);
             itemView.setOnClickListener(this);
         }
 
@@ -137,7 +141,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
            JsonData mJSData=JsonList.get(getLayoutPosition());
             String readlink=mJSData.getReadlink();
             if (mNewsItemClickListener!=null){
-                mNewsItemClickListener.OnItemClickListener(mJSData);
+                mNewsItemClickListener.OnItemClickListener(mJSData,description);
             }
         }
     }
