@@ -8,11 +8,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -59,10 +61,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
     }
 
     @Override
-    public void onBindViewHolder(final NewsAdapter.Viewholder holder, int position) {
+    public void onBindViewHolder(final NewsAdapter.Viewholder holder, final int position) {
         mJsonData=JsonList.get(position);
         holder.category.setText(mJsonData.getCategory());
         holder.description.setText(mJsonData.getHeading());
+        holder.elaboratedNews.setText(mJsonData.getDescription());
+        holder.provider.setText(mJsonData.getProvider());
         //holder.date.setText(mJsonData.getDate().toString());
         //Bitmap bitmap=getBitmApFromUrl(mJsonData.getImageUrl());
 //        Glide.with(mContext).load(mJsonData.getImageUrl())
@@ -70,12 +74,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                .dontTransform()
 //                .into(holder.mImage);
-        holder.description.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        holder.description.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                holder.elaboratedNews.setVisibility(View.VISIBLE);
+//            }
+//        });
         Picasso.with(mContext)
                 .load(mJsonData.getImageUrl())
                 .into(new Target() {
@@ -124,8 +129,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
 
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView description,date,category;
+        public TextView description,date,category,elaboratedNews,provider;
         public ImageView mImage;
+        public LinearLayout extraContents;
         public Viewholder(View itemView) {
             super(itemView);
             description= (TextView) itemView.findViewById(R.id.article_heading);
@@ -133,16 +139,24 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Viewholder> {
             category= (TextView) itemView.findViewById(R.id.category);
             mImage= (ImageView) itemView.findViewById(R.id.image);
             mImage.setTransitionName("headerImage");
+            elaboratedNews= (TextView) itemView.findViewById(R.id.description);
+            extraContents= (LinearLayout) itemView.findViewById(R.id.extra_content);
+            provider= (TextView) itemView.findViewById(R.id.provider);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
            JsonData mJSData=JsonList.get(getLayoutPosition());
-            String readlink=mJSData.getReadlink();
-            if (mNewsItemClickListener!=null){
-                mNewsItemClickListener.OnItemClickListener(mJSData,description);
+            if (extraContents.getVisibility()==View.VISIBLE) {
+                if (mNewsItemClickListener != null) {
+                    mNewsItemClickListener.OnItemClickListener(mJSData, description);
+                }
             }
+            else {
+                extraContents.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 }
