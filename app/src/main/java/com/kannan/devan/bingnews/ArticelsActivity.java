@@ -261,7 +261,7 @@ public class ArticelsActivity extends AppCompatActivity {
                 }
 
                 NewsAdapter mAdapter = new NewsAdapter(mJsonDataList, getContext());
-                NewsView.addItemDecoration(new com.kannan.devan.bingnews.DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
+                //NewsView.addItemDecoration(new com.kannan.devan.bingnews.DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
                 //NewsView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
                 NewsView.setAdapter(mAdapter);
                 mAdapter.setmNewsItemClickListener(this);
@@ -354,15 +354,18 @@ public class ArticelsActivity extends AppCompatActivity {
 
         @Override
         public void OnItemClickListener(JsonData mJsonData,View view) {
-            Intent mIntent=new Intent(getContext(),NewsReadActivity.class);
-            //mIntent.putExtra("readLink",ReadLink);
-            mIntent.putExtra("readLink",mJsonData.getReadlink());
-            mIntent.putExtra("description",mJsonData.getDescription());
-            mIntent.putExtra("imageUrl",mJsonData.getImageUrl());
-            mIntent.putExtra("provider",mJsonData.getProvider());
-            mIntent.putExtra("heading",mJsonData.getHeading());
-            ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),view,"description");
-            startActivity(mIntent,options.toBundle());
+//            Intent mIntent=new Intent(getContext(),NewsReadActivity.class);
+//            //mIntent.putExtra("readLink",ReadLink);
+//            mIntent.putExtra("readLink",mJsonData.getReadlink());
+//            mIntent.putExtra("description",mJsonData.getDescription());
+//            mIntent.putExtra("imageUrl",mJsonData.getImageUrl());
+//            mIntent.putExtra("provider",mJsonData.getProvider());
+//            mIntent.putExtra("heading",mJsonData.getHeading());
+//            ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),view,"description");
+//            startActivity(mIntent,options.toBundle());
+            Intent newsreadIntent=new Intent(getContext(),NewsBrowser.class);
+            newsreadIntent.putExtra("url",mJsonData.getReadlink());
+            startActivity(newsreadIntent);
         }
     }
 
