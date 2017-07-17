@@ -3,8 +3,11 @@ package com.kannan.devan.bingnews;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.*;
 
@@ -363,9 +366,21 @@ public class ArticelsActivity extends AppCompatActivity {
 //            mIntent.putExtra("heading",mJsonData.getHeading());
 //            ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),view,"description");
 //            startActivity(mIntent,options.toBundle());
-            Intent newsreadIntent=new Intent(getContext(),NewsBrowser.class);
-            newsreadIntent.putExtra("url",mJsonData.getReadlink());
-            startActivity(newsreadIntent);
+//            Intent newsreadIntent=new Intent(getContext(),NewsBrowser.class);
+//            newsreadIntent.putExtra("url",mJsonData.getReadlink());
+//            startActivity(newsreadIntent);
+            openUrlinCustomTab(mJsonData.getReadlink());
+        }
+
+        private void openUrlinCustomTab(String readlink) {
+            Uri mUri=Uri.parse(readlink);
+            CustomTabsIntent.Builder cstIntentBuilder=new CustomTabsIntent.Builder();
+            cstIntentBuilder.setToolbarColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
+            cstIntentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
+            cstIntentBuilder.setStartAnimations(getContext(),android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+            cstIntentBuilder.setExitAnimations(getContext(),android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+            CustomTabsIntent mCustomTabIntent=cstIntentBuilder.build();
+            mCustomTabIntent.launchUrl(getContext(),mUri);
         }
     }
 

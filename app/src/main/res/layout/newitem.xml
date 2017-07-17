@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/cardItem"
+    android:animateLayoutChanges="true"
+    android:elevation="4dp"
+    android:layout_margin="4dp">
+ <RelativeLayout
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:focusable="true"
-    android:clickable="true"
-    android:padding="2dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:animateLayoutChanges="true"
+    android:padding="2dp">
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/black_grad"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/items">
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -41,8 +48,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="top"
                 android:textSize="10sp"
+                android:paddingBottom="2dp"
+                android:text="@string/category_entertainment"
                 android:textColor="@android:color/darker_gray"
                 android:id="@+id/category"/>
             <TextView
@@ -53,24 +62,34 @@
         </LinearLayout>
 
     </LinearLayout>
+        </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/image"
-        android:orientation="vertical">
+        android:paddingStart="2dp"
+        android:id="@+id/extra_content"
+        android:paddingEnd="2dp"
+        android:layout_below="@id/items"
+        android:layout_marginTop="2dp"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_alignWithParentIfMissing="true">
         <TextView
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:text="this is the description about this news"
             android:textColor="@color/cardview_dark_background" />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp">
             <TextView
                 android:id="@+id/source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="10sp"
                 android:text="Read more at:" />
             <TextView
                 android:id="@+id/provider"
@@ -78,12 +97,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_alignParentTop="true"
+                android:textSize="10sp"
                 android:layout_toEndOf="@+id/source" />
         </RelativeLayout>
 
     </LinearLayout>
 
 </RelativeLayout>
+    </android.support.v7.widget.CardView>
 <!--
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
