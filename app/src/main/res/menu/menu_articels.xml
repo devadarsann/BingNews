@@ -7,6 +7,6 @@
         android:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/ic_search_black_24dp"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|collapseActionView"
         android:title="@string/search" />
 </menu>

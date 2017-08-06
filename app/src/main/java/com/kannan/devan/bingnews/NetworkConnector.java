@@ -39,7 +39,7 @@ public class NetworkConnector extends AsyncTask<String,Void,String> {
             URL_API=strings[0];
             URL mUrl=new URL(URL_API); //URL("https://api.cognitive.microsoft.com/bing/v5.0/news/");
             HttpURLConnection mHttpconnection= (HttpURLConnection) mUrl.openConnection();
-            mHttpconnection.setRequestProperty("Ocp-Apim-Subscription-Key","Your key");
+            mHttpconnection.setRequestProperty("Ocp-Apim-Subscription-Key","2b983fe0064b416b8b338a973ca81643");
             BufferedReader in=new BufferedReader(new InputStreamReader(mHttpconnection.getInputStream()));
             String inputlIne;
             StringBuffer response=new StringBuffer();

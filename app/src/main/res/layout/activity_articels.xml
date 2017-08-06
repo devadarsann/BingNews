@@ -24,6 +24,16 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+            <android.support.v7.widget.SearchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:iconifiedByDefault="false"
+                android:background="@color/colorPrimaryDark"
+                android:animateLayoutChanges="true"
+                android:visibility="gone"
+                android:id="@+id/search_news">
+            </android.support.v7.widget.SearchView>
+
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout

@@ -1,8 +1,10 @@
 package com.kannan.devan.bingnews;
 
+import android.animation.Animator;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
@@ -29,8 +31,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
+import android.view.animation.Animation;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -57,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ArticelsActivity extends AppCompatActivity {
+public class ArticelsActivity extends AppCompatActivity{
 
     public final String SHARED_PREFS = "com.kannan.newsbing.APPPREFS";
     public final String LASTREFRESHTIME = "Lastrefreshed";
@@ -76,6 +81,21 @@ public class ArticelsActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    private SearchView mSearchView;
+    private Menu searchMenu;
+
+    @Override
+    public void onBackPressed() {
+        if (mViewPager!=null && mViewPager.getAdapter()!=mSectionsPagerAdapter){
+            if (mSectionsPagerAdapter!=null){
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+            }
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +120,36 @@ public class ArticelsActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        mSearchView= (SearchView) findViewById(R.id.search_news);
+
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus){
+                    view.setVisibility(View.GONE);
+
+                    MenuItem searchItem=searchMenu.findItem(R.id.app_bar_search);
+                    searchItem.setVisible(true);
+                }
+            }
+        });
+
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                SearchPageAdapter searchPageAdapter = new SearchPageAdapter(getSupportFragmentManager(),query);
+                mViewPager.setAdapter(searchPageAdapter);
+                searchPageAdapter.notifyDataSetChanged();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
+
         Date now = new Date();
     }
 
@@ -116,6 +166,7 @@ public class ArticelsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_articels, menu);
+        searchMenu=menu;
         return true;
     }
 
@@ -128,11 +179,20 @@ public class ArticelsActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.app_bar_search) {
-            return true;
+            item.setVisible(false);
+            mSearchView.setVisibility(View.VISIBLE);
+            int cx=mSearchView.getWidth();
+            int cy=mSearchView.getHeight()/2;
+
+            Animator anim= ViewAnimationUtils.createCircularReveal(mSearchView,cx,cy,0,cx);
+            anim.setDuration(220);
+            anim.start();
+            mSearchView.setIconified(false);
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -377,6 +437,7 @@ public class ArticelsActivity extends AppCompatActivity {
             CustomTabsIntent.Builder cstIntentBuilder=new CustomTabsIntent.Builder();
             cstIntentBuilder.setToolbarColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
             cstIntentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
+            cstIntentBuilder.setShowTitle(true);
             cstIntentBuilder.setStartAnimations(getContext(),android.R.anim.slide_in_left,android.R.anim.slide_out_right);
             cstIntentBuilder.setExitAnimations(getContext(),android.R.anim.slide_in_left,android.R.anim.slide_out_right);
             CustomTabsIntent mCustomTabIntent=cstIntentBuilder.build();
