@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements ResponseDataListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        NewsView= (RecyclerView) findViewById(R.id.newsview);
+        NewsView= (RecyclerView) findViewById(R.id.newsviewtmp);
         RecyclerView.LayoutManager mLayoutManager=new LinearLayoutManager(this);
         NewsView.setLayoutManager(mLayoutManager);
         Date now=new Date();

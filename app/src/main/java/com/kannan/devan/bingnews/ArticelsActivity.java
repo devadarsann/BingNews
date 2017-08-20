@@ -1,50 +1,30 @@
 package com.kannan.devan.bingnews;
 
 import android.animation.Animator;
-import android.app.ActivityOptions;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.*;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.transition.AutoTransition;
-import android.transition.ChangeBounds;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.transition.ChangeTransform;
-import android.transition.Explode;
-import android.transition.Scene;
-import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
-import android.view.animation.Animation;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,14 +38,17 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ArticelsActivity extends AppCompatActivity{
 
     public final String SHARED_PREFS = "com.kannan.newsbing.APPPREFS";
     public final String LASTREFRESHTIME = "Lastrefreshed";
+    private static final String BING_API = "https://api.cognitive.microsoft.com/bing/v5.0/news";
+    private final String SEARCH = "/search";
+    private final String COUNT = "&count=10";
+    private final String OFFSET = "&offset=0";
+    private final String SAFESEARCH = "&safeSearch=Strict";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -82,14 +65,23 @@ public class ArticelsActivity extends AppCompatActivity{
      */
     private ViewPager mViewPager;
 
+    TabLayout tabLayout;
+
     private SearchView mSearchView;
     private Menu searchMenu;
+    View searchViewParent;
 
     @Override
     public void onBackPressed() {
         if (mViewPager!=null && mViewPager.getAdapter()!=mSectionsPagerAdapter){
             if (mSectionsPagerAdapter!=null){
                 mViewPager.setAdapter(mSectionsPagerAdapter);
+                tabLayout.setVisibility(View.VISIBLE);
+            }
+            else {
+                if(searchViewParent.getVisibility()==View.VISIBLE){
+                    searchViewParent.setVisibility(View.INVISIBLE);
+                }
             }
         }
         else {
@@ -109,6 +101,7 @@ public class ArticelsActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setPopupTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
+        searchViewParent = findViewById(R.id.searchView_parent);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -117,7 +110,7 @@ public class ArticelsActivity extends AppCompatActivity{
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         mSearchView= (SearchView) findViewById(R.id.search_news);
@@ -126,21 +119,27 @@ public class ArticelsActivity extends AppCompatActivity{
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus){
-                    view.setVisibility(View.GONE);
-
+                    //view.setVisibility(View.GONE);
+                    if (mViewPager.getAdapter()==mSectionsPagerAdapter){
+                        tabLayout.setVisibility(View.VISIBLE);
+                    }
                     MenuItem searchItem=searchMenu.findItem(R.id.app_bar_search);
+                    mSearchView.setIconified(true);
                     searchItem.setVisible(true);
+                    searchViewParent.setVisibility(View.GONE);
                 }
             }
         });
 
-        mSearchView.setSubmitButtonEnabled(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                SearchPageAdapter searchPageAdapter = new SearchPageAdapter(getSupportFragmentManager(),query);
-                mViewPager.setAdapter(searchPageAdapter);
-                searchPageAdapter.notifyDataSetChanged();
+                if (query != null && query.length() > 0) {
+                    String buildApi = BING_API + SEARCH;
+                    SearchPageAdapter searchPageAdapter = new SearchPageAdapter(getSupportFragmentManager(), query.trim(), buildApi);
+                    mViewPager.setAdapter(searchPageAdapter);
+                    searchPageAdapter.notifyDataSetChanged();
+                }
                 return true;
             }
 
@@ -159,7 +158,7 @@ public class ArticelsActivity extends AppCompatActivity{
         SharedPreferences mSharedPrefs = getApplicationContext().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor mPrefsEditor = mSharedPrefs.edit();
         mPrefsEditor.putString(LASTREFRESHTIME, refreshTime);
-        mPrefsEditor.commit();
+        mPrefsEditor.apply();
     }
 
     @Override
@@ -180,11 +179,13 @@ public class ArticelsActivity extends AppCompatActivity{
         //noinspection SimplifiableIfStatement
         if (id == R.id.app_bar_search) {
             item.setVisible(false);
-            mSearchView.setVisibility(View.VISIBLE);
-            int cx=mSearchView.getWidth();
-            int cy=mSearchView.getHeight()/2;
+            //mSearchView.setVisibility(View.VISIBLE);
+            searchViewParent.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.GONE);
+            int cx=searchViewParent.getWidth();
+            int cy=searchViewParent.getHeight()/2;
 
-            Animator anim= ViewAnimationUtils.createCircularReveal(mSearchView,cx,cy,0,cx);
+            Animator anim= ViewAnimationUtils.createCircularReveal(searchViewParent,cx,cy,0,cx);
             anim.setDuration(220);
             anim.start();
             mSearchView.setIconified(false);
@@ -215,7 +216,6 @@ public class ArticelsActivity extends AppCompatActivity{
         private final String SPORTS = "/sports.json";
         private final String WORLD = "/world.json";
         private final String SHARED_PREFS = "com.kannan.newsbing.APPPREFS";
-        private final String BING_API = "https://api.cognitive.microsoft.com/bing/v5.0/news/";
         private final String CAT_ENTERTAINTMENT = "?Category=Entertainment";
         private final String CAT_BUSINESS = "?Category=Business";
         private final String CAT_HEALTH = "?Category=Health";

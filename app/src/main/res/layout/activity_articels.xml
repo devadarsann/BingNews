@@ -12,6 +12,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
+        android:animateLayoutChanges="true"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -22,18 +23,25 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <android.support.v7.widget.SearchView
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:weightSum="1">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:iconifiedByDefault="false"
-                android:background="@color/colorPrimaryDark"
-                android:animateLayoutChanges="true"
+                android:padding="2dp"
+                android:id="@+id/searchView_parent"
                 android:visibility="gone"
-                android:id="@+id/search_news">
-            </android.support.v7.widget.SearchView>
-
+                android:clipChildren="true"
+                android:animateLayoutChanges="true"
+                android:layout_height="match_parent">
+                <android.support.v7.widget.SearchView
+                    android:layout_width="match_parent"
+                    android:layout_height="?android:attr/actionBarSize"
+                    android:iconifiedByDefault="false"
+                    android:background="@color/pureDark"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/search_news">
+                </android.support.v7.widget.SearchView>
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout

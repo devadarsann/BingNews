@@ -12,10 +12,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 public class SearchPageAdapter extends FragmentStatePagerAdapter {
 
     String mSearchQuery;
+    String mSearchAPI;
 
-    public SearchPageAdapter(FragmentManager fm, String query) {
+    public SearchPageAdapter(FragmentManager fm, String query, String searchAPI) {
         super(fm);
         mSearchQuery=query;
+        mSearchAPI = searchAPI;
     }
 
     @Override
@@ -24,6 +26,7 @@ public class SearchPageAdapter extends FragmentStatePagerAdapter {
         Fragment mSearResultFragMent= new SearchResultFragment();
         Bundle args=new Bundle();
         args.putString("query",mSearchQuery);
+        args.putString("API",mSearchAPI);
         mSearResultFragMent.setArguments(args);
         return mSearResultFragMent;
     }
